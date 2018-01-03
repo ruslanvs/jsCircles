@@ -1,0 +1,1 @@
+JavaScript debugging educational assignment at Coding Dojo
