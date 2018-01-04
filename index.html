@@ -7,17 +7,18 @@
 	<svg id="svg" xmlns="http://www.w3.org/2000/svg"></svg>
 
 	<script>
-	function Circle(cx, cy, html_id)
-	{
-		var html_id = html_id;
+	var size = 10;
+
+	function Circle(cx, cy, cId) {
+		var cId = cId; //??? can it be defined that way?
 		this.info = { cx: cx,  cy: cy };
 		
 		//private function that generates a random number
-		var randomNumberBetween = function(min, max){
+		var randomNumberBetween = function(min, max) {
 			return Math.random()*(max-min) + min;
 		}
 
-		this.initialize = function(){
+		this.initialize = function() {
 			//give a random velocity for the circle
 			this.info.velocity = {
 				x: randomNumberBetween(-3,3),
@@ -28,16 +29,16 @@
 			var circle = makeSVG('circle', 
 				{ 	cx: this.info.cx,
 				  	cy: this.info.cy,
-				  	r:  10,
-				  	id: html_id,
+				  	r:  size,
+				  	id: cId,
 				  	style: "fill: black"
 				});
 
 			document.getElementById('svg').appendChild(circle);
 		}
 
-		this.update = function(time){
-			var el = document.getElementById(html_id);
+		this.update = function(time) {
+			var el = document.getElementById(cId);
 			
 			//see if the circle is going outside the browser. if it is, reverse the velocity
 			if( this.info.cx > document.body.clientWidth || this.info.cx < 0)
@@ -96,8 +97,9 @@
 
 		this.createNewCircle = function(x,y){
 			var new_circle = new Circle(x,y,counter++);
-			// console.log ( circles );
-			circles.push(new_circle);
+			circles.push( new_circle );
+			// console.log ( new_circle );
+
 		}
 
 		//create one circle when the game starts
@@ -107,8 +109,27 @@
 	var playground = new PlayGround();
 	setInterval(playground.loop, 15);
 
-	document.onclick = function(e) {
-		playground.createNewCircle(e.x,e.y);
+	document.onclick = function( e ) {
+
+		( function() {
+			var mousedown_time;
+			function getTime() {
+				var date = new Date();
+				return date.getTime();
+			}
+			document.onmousedown = function(){
+				mousedown_time = getTime();
+			}
+			document.onmouseup = function(){
+				time_pressed = getTime() - mousedown_time;
+				size = time_pressed / 10;
+				// console.log('You held your mouse down for', time_pressed, 'miliseconds.');
+			}
+			//technically we don't even need the mousedown variable but we're leaving it there for now..
+		})();
+
+		playground.createNewCircle( e.x, e.y );
+		// console.log (e + " " + e.x + " " + e.y );
 	}
 	
 	</script>
